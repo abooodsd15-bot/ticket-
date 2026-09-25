@@ -521,15 +521,15 @@ if (!TOKEN || TOKEN === "حط_التوكن_هنا") {
         "❌ ضع توكن البوت في أعلى الملف."
     );
 
-    process.exit(1);
+console.log("1 - Starting bot login...");
+console.log("2 - Token exists: " + Boolean(TOKEN));
+console.log("3 - Token length: " + TOKEN.length);
 
-}
-
-client.login(TOKEN);
 client.login(TOKEN)
     .then(function () {
-        console.log("LOGIN SUCCESS - BOT CONNECTED");
+        console.log("4 - LOGIN SUCCESS!");
     })
     .catch(function (error) {
-        console.error("LOGIN FAILED:", error);
+        console.error("5 - LOGIN FAILED!");
+        console.error(error);
     });
