@@ -82,7 +82,7 @@ client.once("ready", async () => {
 
     console.log("");
     console.log("=================================");
-    console.log(`     ${BOT_NAME} Ticket Bot`);
+ console.log("     " + BOT_NAME + " Ticket Bot");
     console.log("=================================");
     console.log(`البوت يعمل باسم: ${client.user.tag}`);
     console.log(`عدد السيرفرا
