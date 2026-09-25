@@ -1,17 +1,13 @@
-const {
-    Client,
-    GatewayIntentBits,
-    Partials,
-    ChannelType,
-    PermissionsBitField,
-    ActionRowBuilder,
-    StringSelectMenuBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    EmbedBuilder,
-    REST,
-    Routes,
-    SlashCommandBuilder
+const http = require("http");
+
+const PORT = process.env.PORT || 10000;
+
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end("Rase Bot is online!");
+}).listen(PORT, "0.0.0.0", () => {
+    console.log(`Web server running on port ${PORT}`);
+});
 } = require("discord.js");
 
 // ==============================
