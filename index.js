@@ -1,13 +1,3 @@
-// ==============================
-// توكن البوت
-// ==============================
-
-const TOKEN = "MTU1MzAzOTIwMjE2ODYwNjgwMQ.GoHB_A.1d4U6uNiqEZRvjW5YF0jlSrSxwevcX-aJ21RUQ";
-
-// ==============================
-// Discord.js
-// ==============================
-
 const {
     Client,
     GatewayIntentBits,
@@ -24,29 +14,35 @@ const {
     SlashCommandBuilder
 } = require("discord.js");
 
-// ==============================
-// Render Port
-// ==============================
-
 const http = require("http");
-
-const PORT = process.env.PORT || 10000;
-
-http.createServer(function (req, res) {
-    res.writeHead(200);
-    res.end("Rase Bot is online!");
-}).listen(PORT, "0.0.0.0", function () {
-    console.log("Web server running on port " + PORT);
-});
 
 // ==============================
 // إعدادات البوت
 // ==============================
 
+const TOKEN = "MTU1MzAzOTIwMjE2ODYwNjgwMQ.GoHB_A.1d4U6uNiqEZRvjW5YF0jlSrSxwevcX-aJ21RUQ";
+
 const GUILD_ID = "1518005370612617326";
-const TICKET_CATEGORY_ID = "";
+
 const STAFF_ROLE_ID = "1518010146662518822";
-const BOT_NAME = "Rase";
+
+const TICKET_CATEGORY_ID = "";
+
+const PORT = process.env.PORT || 10000;
+
+// ==============================
+// Render Web Server
+// ==============================
+
+http.createServer(function (req, res) {
+    res.writeHead(200, {
+        "Content-Type": "text/plain; charset=utf-8"
+    });
+
+    res.end("Rase Bot is online!");
+}).listen(PORT, "0.0.0.0", function () {
+    console.log("Web server running on port " + PORT);
+});
 
 // ==============================
 // إنشاء البوت
@@ -54,8 +50,7 @@ const BOT_NAME = "Rase";
 
 const client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers
+        GatewayIntentBits.Guilds
     ],
     partials: [
         Partials.Channel
@@ -63,7 +58,7 @@ const client = new Client({
 });
 
 // ==============================
-// أوامر السلاش
+// أمر السلاش
 // ==============================
 
 const commands = [
@@ -79,12 +74,10 @@ const commands = [
 
 client.once("ready", async function () {
 
-    console.log("");
     console.log("=================================");
-    console.log("     " + BOT_NAME + " Ticket Bot");
-    console.log("=================================");
-    console.log("البوت يعمل باسم: " + client.user.tag);
-    console.log("عدد السيرفرات: " + client.guilds.cache.size);
+    console.log("Rase Ticket Bot");
+    console.log("Bot: " + client.user.tag);
+    console.log("Servers: " + client.guilds.cache.size);
     console.log("=================================");
 
     client.user.setPresence({
@@ -113,423 +106,684 @@ client.once("ready", async function () {
             }
         );
 
-        console.log("تم تسجيل أمر /setup-ticket بنجاح.");
+        console.log("تم تسجيل /setup-ticket بنجاح.");
 
     } catch (error) {
 
-        console.error("خطأ في تسجيل الأمر:", error);
+        console.error("خطأ في تسجيل الأمر:");
+        console.error(error);
 
     }
+
 });
 
 // ==============================
-// أمر إنشاء لوحة التكت
+// جميع التفاعلات
 // ==============================
 
 client.on("interactionCreate", async function (interaction) {
 
-    if (!interaction.isChatInputCommand()) return;
+    try {
 
-    if (interaction.commandName !== "setup-ticket") return;
+        // ==========================
+        // أمر Setup Ticket
+        // ==========================
 
-    if (
-        !interaction.member.permissions.has(
-            PermissionsBitField.Flags.Administrator
-        )
-    ) {
+        if (interaction.isChatInputCommand()) {
 
-        return interaction.reply({
-            content: "❌ هذا الأمر للإدارة فقط.",
-            ephemeral: true
-        });
-
-    }
-
-    const embed = new EmbedBuilder()
-        .setColor("#4b0d1a")
-        .setTitle("🎫 Rase Ticket")
-        .setDescription(
-            "### مرحباً بك في نظام التذاكر\n\n" +
-            "اختر نوع التذكرة المناسبة لك من القائمة بالأسفل.\n\n" +
-            "🎭 **طلب رول**\n" +
-            "لتقديم طلب للحصول على رول.\n\n" +
-            "⚠️ **شكوى**\n" +
-            "لتقديم شكوى للإدارة.\n\n" +
-            "👑 **طلب ادمن**\n" +
-            "للتواصل مع الإدارة بخصوص طلب إداري.\n\n" +
-            "❓ **استفسار**\n" +
-            "لأي استفسار أو مساعدة."
-        )
-        .setFooter({
-            text: "Rase • Ticket System"
-        })
-        .setTimestamp();
-
-    const menu = new StringSelectMenuBuilder()
-        .setCustomId("rase_ticket_menu")
-        .setPlaceholder("اختر نوع التكت...")
-        .addOptions([
-            {
-                label: "طلب رول",
-                description: "فتح تكت لطلب رول",
-                value: "role_request",
-                emoji: "🎭"
-            },
-            {
-                label: "شكوى",
-                description: "فتح تكت لتقديم شكوى",
-                value: "complaint",
-                emoji: "⚠️"
-            },
-            {
-                label: "طلب ادمن",
-                description: "فتح تكت لطلب إداري",
-                value: "admin_request",
-                emoji: "👑"
-            },
-            {
-                label: "استفسار",
-                description: "فتح تكت للاستفسار",
-                value: "inquiry",
-                emoji: "❓"
+            if (interaction.commandName !== "setup-ticket") {
+                return;
             }
-        ]);
 
-    const row = new ActionRowBuilder()
-        .addComponents(menu);
+            if (
+                !interaction.member.permissions.has(
+                    PermissionsBitField.Flags.Administrator
+                )
+            ) {
 
-    await interaction.channel.send({
-        embeds: [embed],
-        components: [row]
-    });
+                await interaction.reply({
+                    content: "❌ هذا الأمر للإدارة فقط.",
+                    ephemeral: true
+                });
 
-    await interaction.reply({
-        content: "✅ تم إرسال لوحة التكت.",
-        ephemeral: true
-    });
-});
+                return;
+            }
 
-// ==============================
-// اختيار نوع التكت
-// ==============================
+            const embed = new EmbedBuilder()
+                .setColor("#4b0d1a")
+                .setTitle("🎫 Rase Ticket")
+                .setDescription(
+                    "### مرحباً بك في نظام التذاكر\n\n" +
+                    "اختر نوع التذكرة المناسبة لك من القائمة بالأسفل.\n\n" +
 
-client.on("interactionCreate", async function (interaction) {
+                    "🎭 **طلب رول**\n" +
+                    "لتقديم طلب للحصول على رول.\n\n" +
 
-    if (!interaction.isStringSelectMenu()) return;
+                    "⚠️ **شكوى**\n" +
+                    "لتقديم شكوى للإدارة.\n\n" +
 
-    if (interaction.customId !== "rase_ticket_menu") return;
+                    "👑 **طلب ادمن**\n" +
+                    "للتواصل مع الإدارة بخصوص طلب إداري.\n\n" +
 
-    await interaction.deferReply({
-        ephemeral: true
-    });
+                    "❓ **استفسار**\n" +
+                    "لأي استفسار أو مساعدة."
+                )
+                .setFooter({
+                    text: "Rase • Ticket System"
+                })
+                .setTimestamp();
 
-    const guild = interaction.guild;
-    const member = interaction.member;
+            const menu = new StringSelectMenuBuilder()
+                .setCustomId("rase_ticket_menu")
+                .setPlaceholder("اختر نوع التكت...")
+                .addOptions([
 
-    const ticketNames = {
-        role_request: "طلب-رول",
-        complaint: "شكوى",
-        admin_request: "طلب-ادمن",
-        inquiry: "استفسار"
-    };
+                    {
+                        label: "طلب رول",
+                        description: "فتح تكت لطلب رول",
+                        value: "role_request",
+                        emoji: "🎭"
+                    },
 
-    const ticketName = ticketNames[interaction.values[0]];
+                    {
+                        label: "شكوى",
+                        description: "فتح تكت لتقديم شكوى",
+                        value: "complaint",
+                        emoji: "⚠️"
+                    },
 
-    const existingTicket = guild.channels.cache.find(function (channel) {
+                    {
+                        label: "طلب ادمن",
+                        description: "فتح تكت لطلب إداري",
+                        value: "admin_request",
+                        emoji: "👑"
+                    },
 
-        return (
-            channel.type === ChannelType.GuildText &&
-            channel.topic === "RaseTicket-" + member.id
-        );
+                    {
+                        label: "استفسار",
+                        description: "فتح تكت للاستفسار",
+                        value: "inquiry",
+                        emoji: "❓"
+                    }
 
-    });
+                ]);
 
-    if (existingTicket) {
+            const row = new ActionRowBuilder()
+                .addComponents(menu);
 
-        return interaction.editReply({
-            content: "❌ عندك تكت مفتوح بالفعل: " + existingTicket
-        });
+            await interaction.channel.send({
+                embeds: [embed],
+                components: [row]
+            });
 
-    }
+            await interaction.reply({
+                content: "✅ تم إرسال لوحة التكت.",
+                ephemeral: true
+            });
 
-    let category = null;
-
-    if (TICKET_CATEGORY_ID) {
-
-        category = guild.channels.cache.get(
-            TICKET_CATEGORY_ID
-        );
-
-    }
-
-    if (!category) {
-
-        category = guild.channels.cache.find(function (channel) {
-
-            return (
-                channel.type === ChannelType.GuildCategory &&
-                channel.name === "Rase Tickets"
-            );
-
-        });
-
-    }
-
-    if (!category) {
-
-        category = await guild.channels.create({
-            name: "Rase Tickets",
-            type: ChannelType.GuildCategory
-        });
-
-    }
-
-    const permissionOverwrites = [
-
-        {
-            id: guild.id,
-            deny: [
-                PermissionsBitField.Flags.ViewChannel
-            ]
-        },
-
-        {
-            id: member.id,
-            allow: [
-                PermissionsBitField.Flags.ViewChannel,
-                PermissionsBitField.Flags.SendMessages,
-                PermissionsBitField.Flags.ReadMessageHistory,
-                PermissionsBitField.Flags.AttachFiles
-            ]
+            return;
         }
 
-    ];
+        // ==========================
+        // اختيار نوع التكت
+        // ==========================
 
-    if (
-        STAFF_ROLE_ID &&
-        guild.roles.cache.has(STAFF_ROLE_ID)
-    ) {
+        if (interaction.isStringSelectMenu()) {
 
-        permissionOverwrites.push({
+            if (interaction.customId !== "rase_ticket_menu") {
+                return;
+            }
 
-            id: STAFF_ROLE_ID,
+            await interaction.deferReply({
+                ephemeral: true
+            });
 
-            allow: [
-                PermissionsBitField.Flags.ViewChannel,
-                PermissionsBitField.Flags.SendMessages,
-                PermissionsBitField.Flags.ReadMessageHistory,
-                PermissionsBitField.Flags.ManageChannels
-            ]
+            const guild = interaction.guild;
 
-        });
+            const member = interaction.member;
 
-    }
+            const ticketNames = {
+                role_request: "طلب-رول",
+                complaint: "شكوى",
+                admin_request: "طلب-ادمن",
+                inquiry: "استفسار"
+            };
 
-    const safeUsername = member.user.username
-        .toLowerCase()
-        .replace(/[^a-z0-9\u0600-\u06FF-_]/g, "-")
-        .slice(0, 90);
+            const ticketName =
+                ticketNames[interaction.values[0]] || "تكت";
 
-    const ticketChannel = await guild.channels.create({
+            // ==========================
+            // التأكد من عدم وجود تكت
+            // ==========================
 
-        name: ticketName + "-" + safeUsername,
+            const existingTicket =
+                guild.channels.cache.find(function (channel) {
 
-        type: ChannelType.GuildText,
+                    return (
+                        channel.type === ChannelType.GuildText &&
+                        channel.topic ===
+                        "RaseTicket-" + member.id
+                    );
 
-        parent: category.id,
+                });
 
-        topic: "RaseTicket-" + member.id,
+            if (existingTicket) {
 
-        permissionOverwrites: permissionOverwrites
+                await interaction.editReply({
+                    content:
+                        "❌ عندك تكت مفتوح بالفعل: " +
+                        existingTicket
+                });
 
-    });
+                return;
+            }
 
-    const ticketEmbed = new EmbedBuilder()
-        .setColor("#4b0d1a")
-        .setTitle("🎫 " + ticketName)
-        .setDescription(
-            "أهلاً " + member + " 👋\n\n" +
-            "تم فتح تذكرتك بنجاح.\n" +
-            "يرجى كتابة طلبك بالتفصيل وانتظار رد الإدارة.\n\n" +
-            "**نوع التذكرة:** " + ticketName + "\n" +
-            "**صاحب التذكرة:** " + member + "\n\n" +
-            "🔒 عند الانتهاء اضغط على زر **إغلاق التكت**."
-        )
-        .setFooter({
-            text: "Rase Ticket System"
-        })
-        .setTimestamp();
+            // ==========================
+            // البحث عن الكاتيجوري
+            // ==========================
 
-    const closeButton = new ButtonBuilder()
-        .setCustomId("rase_close_ticket")
-        .setLabel("إغلاق التكت")
-        .setEmoji("🔒")
-        .setStyle(ButtonStyle.Danger);
+            let category = null;
 
-    const row = new ActionRowBuilder()
-        .addComponents(closeButton);
+            if (TICKET_CATEGORY_ID) {
 
-    let staffMention = "";
+                category =
+                    guild.channels.cache.get(
+                        TICKET_CATEGORY_ID
+                    ) || null;
 
-    if (STAFF_ROLE_ID) {
-        staffMention = "<@&" + STAFF_ROLE_ID + ">";
-    }
+            }
 
-    await ticketChannel.send({
+            if (!category) {
 
-        content: member + " " + staffMention,
+                category =
+                    guild.channels.cache.find(
+                        function (channel) {
 
-        embeds: [ticketEmbed],
+                            return (
+                                channel.type ===
+                                ChannelType.GuildCategory &&
+                                channel.name ===
+                                "Rase Tickets"
+                            );
 
-        components: [row]
+                        }
+                    ) || null;
 
-    });
+            }
 
-    await interaction.editReply({
+            // ==========================
+            // إنشاء الكاتيجوري
+            // ==========================
 
-        content: "✅ تم إنشاء تكتك: " + ticketChannel
+            if (!category) {
 
-    });
+                category =
+                    await guild.channels.create({
 
-});
+                        name: "Rase Tickets",
 
-// ==============================
-// زر إغلاق التكت
-// ==============================
+                        type:
+                            ChannelType.GuildCategory
 
-client.on("interactionCreate", async function (interaction) {
+                    });
 
-    if (!interaction.isButton()) return;
+            }
 
-    if (interaction.customId !== "rase_close_ticket") return;
+            // ==========================
+            // الصلاحيات
+            // ==========================
 
-    const confirmEmbed = new EmbedBuilder()
-        .setColor("#8b0000")
-        .setTitle("🔒 إغلاق التكت")
-        .setDescription(
-            "هل أنت متأكد أنك تريد إغلاق هذه التذكرة؟"
+            const permissionOverwrites = [
+
+                {
+                    id: guild.id,
+
+                    deny: [
+                        PermissionsBitField.Flags.ViewChannel
+                    ]
+                },
+
+                {
+                    id: member.id,
+
+                    allow: [
+                        PermissionsBitField.Flags.ViewChannel,
+                        PermissionsBitField.Flags.SendMessages,
+                        PermissionsBitField.Flags.ReadMessageHistory,
+                        PermissionsBitField.Flags.AttachFiles
+                    ]
+                }
+
+            ];
+
+            if (
+                STAFF_ROLE_ID &&
+                guild.roles.cache.has(STAFF_ROLE_ID)
+            ) {
+
+                permissionOverwrites.push({
+
+                    id: STAFF_ROLE_ID,
+
+                    allow: [
+                        PermissionsBitField.Flags.ViewChannel,
+                        PermissionsBitField.Flags.SendMessages,
+                        PermissionsBitField.Flags.ReadMessageHistory,
+                        PermissionsBitField.Flags.ManageChannels
+                    ]
+
+                });
+
+            }
+
+            // ==========================
+            // اسم التكت
+            // ==========================
+
+            const username =
+                String(member.user.username)
+                    .toLowerCase()
+                    .replace(
+                        /[^a-z0-9\u0600-\u06FF_-]/g,
+                        "-"
+                    )
+                    .slice(0, 70) || "user";
+
+            // ==========================
+            // إنشاء التكت
+            // ==========================
+
+            const ticketChannel =
+                await guild.channels.create({
+
+                    name:
+                        ticketName +
+                        "-" +
+                        username,
+
+                    type:
+                        ChannelType.GuildText,
+
+                    parent:
+                        category.id,
+
+                    topic:
+                        "RaseTicket-" +
+                        member.id,
+
+                    permissionOverwrites:
+                        permissionOverwrites
+
+                });
+
+            // ==========================
+            // رسالة التكت
+            // ==========================
+
+            const ticketEmbed =
+                new EmbedBuilder()
+
+                    .setColor("#4b0d1a")
+
+                    .setTitle(
+                        "🎫 " +
+                        ticketName
+                    )
+
+                    .setDescription(
+
+                        "أهلاً " +
+                        member +
+                        " 👋\n\n" +
+
+                        "تم فتح تذكرتك بنجاح.\n" +
+
+                        "يرجى كتابة طلبك بالتفصيل وانتظار رد الإدارة.\n\n" +
+
+                        "**نوع التذكرة:** " +
+                        ticketName +
+                        "\n" +
+
+                        "**صاحب التذكرة:** " +
+                        member +
+                        "\n\n" +
+
+                        "🔒 عند الانتهاء اضغط على زر **إغلاق التكت**."
+
+                    )
+
+                    .setFooter({
+                        text: "Rase Ticket System"
+                    })
+
+                    .setTimestamp();
+
+            // ==========================
+            // زر الإغلاق
+            // ==========================
+
+            const closeButton =
+                new ButtonBuilder()
+
+                    .setCustomId(
+                        "rase_close_ticket"
+                    )
+
+                    .setLabel(
+                        "إغلاق التكت"
+                    )
+
+                    .setEmoji("🔒")
+
+                    .setStyle(
+                        ButtonStyle.Danger
+                    );
+
+            const buttonRow =
+                new ActionRowBuilder()
+                    .addComponents(
+                        closeButton
+                    );
+
+            const staffMention =
+                STAFF_ROLE_ID
+                    ? "<@&" +
+                      STAFF_ROLE_ID +
+                      ">"
+                    : "";
+
+            await ticketChannel.send({
+
+                content:
+                    member +
+                    " " +
+                    staffMention,
+
+                embeds: [
+                    ticketEmbed
+                ],
+
+                components: [
+                    buttonRow
+                ]
+
+            });
+
+            await interaction.editReply({
+
+                content:
+                    "✅ تم إنشاء تكتك: " +
+                    ticketChannel
+
+            });
+
+            return;
+        }
+
+        // ==========================
+        // زر إغلاق التكت
+        // ==========================
+
+        if (interaction.isButton()) {
+
+            if (
+                interaction.customId ===
+                "rase_close_ticket"
+            ) {
+
+                const embed =
+                    new EmbedBuilder()
+
+                        .setColor("#8b0000")
+
+                        .setTitle(
+                            "🔒 إغلاق التكت"
+                        )
+
+                        .setDescription(
+                            "هل أنت متأكد أنك تريد إغلاق هذه التذكرة؟"
+                        );
+
+                const confirmButton =
+                    new ButtonBuilder()
+
+                        .setCustomId(
+                            "rase_confirm_close"
+                        )
+
+                        .setLabel(
+                            "تأكيد الإغلاق"
+                        )
+
+                        .setEmoji("🔒")
+
+                        .setStyle(
+                            ButtonStyle.Danger
+                        );
+
+                const cancelButton =
+                    new ButtonBuilder()
+
+                        .setCustomId(
+                            "rase_cancel_close"
+                        )
+
+                        .setLabel(
+                            "إلغاء"
+                        )
+
+                        .setEmoji("❌")
+
+                        .setStyle(
+                            ButtonStyle.Secondary
+                        );
+
+                const row =
+                    new ActionRowBuilder()
+                        .addComponents(
+                            confirmButton,
+                            cancelButton
+                        );
+
+                await interaction.reply({
+
+                    embeds: [
+                        embed
+                    ],
+
+                    components: [
+                        row
+                    ]
+
+                });
+
+                return;
+            }
+
+            // ==========================
+            // إلغاء الإغلاق
+            // ==========================
+
+            if (
+                interaction.customId ===
+                "rase_cancel_close"
+            ) {
+
+                await interaction.update({
+
+                    content:
+                        "✅ تم إلغاء إغلاق التكت.",
+
+                    embeds: [],
+
+                    components: []
+
+                });
+
+                return;
+            }
+
+            // ==========================
+            // تأكيد الإغلاق
+            // ==========================
+
+            if (
+                interaction.customId ===
+                "rase_confirm_close"
+            ) {
+
+                await interaction.update({
+
+                    content:
+                        "🔒 سيتم إغلاق التكت خلال 3 ثواني...",
+
+                    embeds: [],
+
+                    components: []
+
+                });
+
+                setTimeout(
+                    async function () {
+
+                        try {
+
+                            await interaction.channel.delete();
+
+                        } catch (error) {
+
+                            console.error(
+                                "تعذر حذف التكت:",
+                                error
+                            );
+
+                        }
+
+                    },
+                    3000
+                );
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Interaction error:",
+            error
         );
-
-    const confirmButton = new ButtonBuilder()
-        .setCustomId("rase_confirm_close")
-        .setLabel("تأكيد الإغلاق")
-        .setEmoji("🔒")
-        .setStyle(ButtonStyle.Danger);
-
-    const cancelButton = new ButtonBuilder()
-        .setCustomId("rase_cancel_close")
-        .setLabel("إلغاء")
-        .setEmoji("❌")
-        .setStyle(ButtonStyle.Secondary);
-
-    const row = new ActionRowBuilder()
-        .addComponents(
-            confirmButton,
-            cancelButton
-        );
-
-    await interaction.reply({
-        embeds: [confirmEmbed],
-        components: [row]
-    });
-
-});
-
-// ==============================
-// تأكيد إغلاق التكت
-// ==============================
-
-client.on("interactionCreate", async function (interaction) {
-
-    if (!interaction.isButton()) return;
-
-    if (interaction.customId === "rase_cancel_close") {
-
-        await interaction.update({
-
-            content: "✅ تم إلغاء إغلاق التكت.",
-
-            embeds: [],
-
-            components: []
-
-        });
-
-        return;
-    }
-
-    if (interaction.customId !== "rase_confirm_close") return;
-
-    await interaction.update({
-
-        content: "🔒 سيتم إغلاق التكت خلال 3 ثواني...",
-
-        embeds: [],
-
-        components: []
-
-    });
-
-    setTimeout(async function () {
 
         try {
 
-            await interaction.channel.delete();
+            if (
+                interaction.deferred ||
+                interaction.replied
+            ) {
 
-        } catch (error) {
+                await interaction.editReply({
 
-            console.log(
-                "تعذر حذف التكت:",
-                error
+                    content:
+                        "❌ حدث خطأ أثناء تنفيذ الطلب."
+
+                });
+
+            } else {
+
+                await interaction.reply({
+
+                    content:
+                        "❌ حدث خطأ أثناء تنفيذ الطلب.",
+
+                    ephemeral: true
+
+                });
+
+            }
+
+        } catch (replyError) {
+
+            console.error(
+                "Reply error:",
+                replyError
             );
 
         }
 
-    }, 3000);
+    }
 
 });
 
 // ==============================
-// أخطاء البوت
+// أخطاء عامة
 // ==============================
 
-process.on("unhandledRejection", function (error) {
+process.on(
+    "unhandledRejection",
+    function (error) {
 
-    console.error(
-        "Unhandled Rejection:",
-        error
-    );
+        console.error(
+            "Unhandled Rejection:",
+            error
+        );
 
-});
+    }
+);
 
-process.on("uncaughtException", function (error) {
+process.on(
+    "uncaughtException",
+    function (error) {
 
-    console.error(
-        "Uncaught Exception:",
-        error
-    );
+        console.error(
+            "Uncaught Exception:",
+            error
+        );
 
-});
+    }
+);
 
 // ==============================
-// تسجيل الدخول
+// فحص التوكن
 // ==============================
 
-if (!TOKEN || TOKEN === "حط_التوكن_هنا") {
+if (
+    !TOKEN ||
+    TOKEN === "حط_التوكن_هنا"
+) {
 
     console.error(
         "❌ ضع توكن البوت في أعلى الملف."
     );
 
-console.log("1 - Starting bot login...");
-console.log("2 - Token exists: " + Boolean(TOKEN));
-console.log("3 - Token length: " + TOKEN.length);
+    process.exit(1);
+}
+
+// ==============================
+// تسجيل دخول Discord
+// ==============================
+
+console.log(
+    "Starting Discord login..."
+);
 
 client.login(TOKEN)
     .then(function () {
-        console.log("4 - LOGIN SUCCESS!");
+
+        console.log(
+            "LOGIN SUCCESS!"
+        );
+
     })
     .catch(function (error) {
-        console.error("5 - LOGIN FAILED!");
-        console.error(error);
+
+        console.error(
+            "LOGIN FAILED!"
+        );
+
+        console.error(
+            error
+        );
+
+        process.exit(1);
+
     });
