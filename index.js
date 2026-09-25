@@ -1,3 +1,20 @@
+const {
+    Client,
+    GatewayIntentBits,
+    Partials,
+    ChannelType,
+    PermissionsBitField,
+    ActionRowBuilder,
+    StringSelectMenuBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder,
+    REST,
+    Routes,
+    SlashCommandBuilder
+} = require("discord.js");
+
+// Render Port
 const http = require("http");
 
 const PORT = process.env.PORT || 10000;
@@ -8,31 +25,13 @@ http.createServer((req, res) => {
 }).listen(PORT, "0.0.0.0", () => {
     console.log(`Web server running on port ${PORT}`);
 });
-} = require("discord.js");
 
-// ==============================
 // إعدادات البوت
-// ==============================
-
 const TOKEN = process.env.TOKEN;
-
-// حط ID السيرفر هنا
-const GUILD_ID = "1553039202168606801";
-
-// حط ID الكاتيجوري اللي تبي التكتات تنفتح داخله
-// إذا ما عندك، خله كما هو وسيتم إنشاء كاتيجوري تلقائياً
+const GUILD_ID = "1518005370612617326";
 const TICKET_CATEGORY_ID = "";
-
-// حط ID رتبة الإدارة هنا
-// هذه الرتبة تشوف التكتات
 const STAFF_ROLE_ID = "1518010146662518822";
-
-// اسم البوت
 const BOT_NAME = "Rase";
-
-// ==============================
-// تشغيل البوت
-// ==============================
 
 const client = new Client({
     intents: [
