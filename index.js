@@ -526,3 +526,10 @@ if (!TOKEN || TOKEN === "حط_التوكن_هنا") {
 }
 
 client.login(TOKEN);
+client.login(TOKEN)
+    .then(function () {
+        console.log("LOGIN SUCCESS - BOT CONNECTED");
+    })
+    .catch(function (error) {
+        console.error("LOGIN FAILED:", error);
+    });
