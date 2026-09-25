@@ -766,24 +766,26 @@ console.log(
     "Starting Discord login..."
 );
 
+console.log("Starting Discord login...");
+
+client.on("error", function (error) {
+    console.error("DISCORD CLIENT ERROR:");
+    console.error(error);
+});
+
+client.on("debug", function (message) {
+    console.log("DISCORD DEBUG: " + message);
+});
+
 client.login(TOKEN)
     .then(function () {
-
-        console.log(
-            "LOGIN SUCCESS!"
-        );
-
+        console.log("LOGIN SUCCESS!");
     })
     .catch(function (error) {
-
-        console.error(
-            "LOGIN FAILED!"
-        );
-
-        console.error(
-            error
-        );
-
-        process.exit(1);
-
+        console.error("LOGIN FAILED!");
+        console.error(error);
     });
+
+setTimeout(function () {
+    console.log("LOGIN TIMEOUT - Discord Gateway did not connect.");
+}, 30000);
