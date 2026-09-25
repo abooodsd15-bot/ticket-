@@ -28,7 +28,7 @@ http.createServer((req, res) => {
 
 // إعدادات البوت
 const TOKEN = process.env.TOKEN;
-const GUILD_ID = "1553039202168606801";
+const GUILD_ID = "1518005370612617326";
 const TICKET_CATEGORY_ID = "";
 const STAFF_ROLE_ID = "1518010146662518822";
 const BOT_NAME = "Rase";
